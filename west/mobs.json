@@ -1,0 +1,182 @@
+{
+    "Imp": {
+      "health": 4,
+      "attack": 1,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "Slight cackling can be heard in the distance",
+        "voice2": "A small, green creature can be seen just ahead"
+      }
+    },
+    "Wolf": {
+      "health": 6,
+      "attack": 2,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "You hear low growls",
+        "voice2": "A canine bares its teeth"
+      }
+    },
+    "Zombie": {
+      "health": 8,
+      "attack": 2,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "The stench of rot reaches you before anything else",
+        "voice2": "A dead man walks, and he has noticed you"
+      }
+    },
+    "Carrion Crow": {
+      "health": 3,
+      "attack": 2,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "Black wings clatter overhead",
+        "voice2": "A crow watches you with an eye too patient for a bird"
+      }
+    },
+    "Famished Hound": {
+      "health": 7,
+      "attack": 3,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "Ribs show through its matted hide as it circles",
+        "voice2": "Something starved has caught your scent"
+      }
+    },
+    "Plague Rat": {
+      "health": 2,
+      "attack": 1,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "Tiny claws skitter across the dirt",
+        "voice2": "A swollen rat drags itself toward you, leaking"
+      }
+    },
+    "Bandit": {
+      "health": 10,
+      "attack": 3,
+      "shield": 1,
+      "introPhrase": {
+        "voice1": "A voice tells you to drop what you carry",
+        "voice2": "A ragged man steps from cover, knife already drawn"
+      }
+    },
+    "Highwayman": {
+      "health": 12,
+      "attack": 4,
+      "shield": 1,
+      "introPhrase": {
+        "voice1": "Hooves slow to a walk behind you",
+        "voice2": "He tips his hat, then levels a rusted pistol"
+      }
+    },
+    "Coyote": {
+      "health": 5,
+      "attack": 2,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "A yip answers another, closer than the first",
+        "voice2": "Yellow eyes catch the last of the light"
+      }
+    },
+    "Vulture": {
+      "health": 4,
+      "attack": 2,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "A shadow wheels slow circles above",
+        "voice2": "It has decided you are already meat"
+      }
+    },
+    "Rattlesnake": {
+      "health": 3,
+      "attack": 4,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "A dry rattle stops you mid-step",
+        "voice2": "Coiled in the rocks, it waits for you to err"
+      }
+    },
+    "Grave Robber": {
+      "health": 9,
+      "attack": 3,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "A spade scrapes against something it should not",
+        "voice2": "He looks up from the open grave, unashamed"
+      }
+    },
+    "Penitent": {
+      "health": 11,
+      "attack": 3,
+      "shield": 2,
+      "introPhrase": {
+        "voice1": "Chains drag in rhythm with muttered prayer",
+        "voice2": "A hooded figure scourges himself, then turns to you"
+      }
+    },
+    "False Preacher": {
+      "health": 13,
+      "attack": 4,
+      "shield": 1,
+      "introPhrase": {
+        "voice1": "Scripture is spoken in a voice that does not believe it",
+        "voice2": "He smiles and promises you salvation for a price"
+      }
+    },
+    "Wendigo": {
+      "health": 16,
+      "attack": 5,
+      "shield": 0,
+      "introPhrase": {
+        "voice1": "The cold deepens for no reason the sky can explain",
+        "voice2": "Something tall and wrong unfolds from the tree line"
+      }
+    },
+    "Revenant": {
+      "health": 14,
+      "attack": 4,
+      "shield": 2,
+      "introPhrase": {
+        "voice1": "Dry earth shifts where nothing should be buried",
+        "voice2": "It remembers being wronged, and it remembers you"
+      }
+    },
+    "Brimstone Imp": {
+      "health": 9,
+      "attack": 4,
+      "shield": 1,
+      "introPhrase": {
+        "voice1": "The air tastes of sulfur and old smoke",
+        "voice2": "A larger cousin of the imp grins through the haze"
+      }
+    },
+    "Dust Wraith": {
+      "health": 10,
+      "attack": 3,
+      "shield": 1,
+      "introPhrase": {
+        "voice1": "The wind picks up grit and forgets to put it down",
+        "voice2": "A shape made of dust and grievance takes form"
+      }
+    },
+    "Hollow Saint": {
+      "health": 18,
+      "attack": 5,
+      "shield": 3,
+      "introPhrase": {
+        "voice1": "A halo of dead flies hums around something holy and wrong",
+        "voice2": "It was sainted once. Whatever answered the prayer was not God"
+      }
+    },
+    "The Tithe Collector": {
+      "health": 22,
+      "attack": 6,
+      "shield": 3,
+      "introPhrase": {
+        "voice1": "A bell tolls though no church stands for miles",
+        "voice2": "He has come for what is owed, and all debts are paid in full"
+      }
+    }
+  }
