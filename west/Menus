@@ -1,0 +1,16 @@
+import random
+import time
+import os
+import json
+import pyfiglet
+from rich import print as pRich, box
+from rich.panel import Panel
+from rich.align import Align
+from rich.console import Console
+from rich.text import Text
+from rich.table import Table
+from rich.prompt import Prompt
+from rich.theme import Theme
+console = Console()
+with open("mobs.json") as m:
+    mobs = json.load(m)
