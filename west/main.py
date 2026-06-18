@@ -46,7 +46,7 @@ def pCentered(text):
  
  
  
-def pDialogue(text, style="cyan"):
+def pDialogue(text):
  
     """Randomized typing intervals."""
  
@@ -169,9 +169,9 @@ def discoverloot():
     else:
         inventory[lootedItem] = 1
 
-    p(f"It's a {lootedItem}!")
+    pType(f"You discovered {lootedItem}!")
     time.sleep(3)
-    print(f"{lootedItem} added to inventory.")
+    pType(f"{lootedItem} added to inventory.")
     time.sleep(2)
     c()
  
@@ -186,23 +186,116 @@ stats = {
  
 inventory = {}
  
+
+def checkdeath():
+    if stats["health"]<=0:
+        print(pyfiglet.figlet_format("GAME OVER", font="doom"))
+        time.sleep(4)
+        input("Press any key to continue...")
+        quit()
+        ##TODO - Add a death screen
  
-def playerAttack(mob):
+def playerAttack(mob,mobName):
+    number=random.random()
+
+
+    pType("Charging Attack...")
+    time.sleep(5)
+
+
     dmg = stats["attack"]
-    if mob["shield"] > 0:
-        if mob["shield"] > dmg:
-            print(f"Monster has a shield! {dmg} damage deflected.")
+
+
+    if number < 0.9:
+
+        if mob["shield"] > 0:
+
+
+            if mob["shield"] > dmg:
+                pType(f"{mobName} has a shield! {dmg} damage deflected.")
+            else:
+                pType(f"You broke {mobName}'s shield!")
+                mob["shield"] -= dmg
+
+
+            if mob["shield"] < 0:
+                mob["health"] -= abs(mob["shield"])
+                mob["shield"] = 0
+
+
         else:
-            print("You broke the monster's shield!")
-        mob["shield"] -= dmg
-        if mob["shield"] < 0:
-            mob["health"] -= abs(mob["shield"])
-            mob["shield"] = 0
+            mob["health"] -= dmg
+            if mob["health"]<=0:
+                p(f"{mobName} killed!")
+                discoverloot()
+                time.sleep(5)
+                return
+            
+
+        print(f"{mobName} has {mob['health']} health remaining!")
+        time.sleep(5)
+        return
+
     else:
-        mob["health"] -= dmg
-    print(f"Monster has {mob['health']} remaining!")
- 
- 
+        p("Attack missed!")
+        return
+def mobAttack(mob, mobName):
+    
+    number=random.random()
+
+
+    pType(f"{mobName} is preparing attack...")
+    time.sleep(3)
+
+
+    dmg = stats["attack"]
+    crit=random.randrange(1,11)
+    if crit in ["9", "10"]:
+        dmg = dmg * 2
+        pType("Critical hit!")
+
+
+    if number < 0.9:
+
+        if stats["shield"] > 0:
+
+
+            if stats["shield"] > dmg:
+                pType(f"Your shield protected you! {dmg} damage deflected.")
+            else:
+                pType(f"Your shield is broken!")
+                stats["shield"] -= dmg
+
+
+            if stats["shield"] < 0:
+                stats["health"] -= abs(stats["shield"])
+                stats["shield"] = 0
+
+
+        else:
+            stats["health"] -= dmg
+            if stats["health"]<=0:
+                c()
+                pDialogue("The winter grows colder.")
+                time.sleep(2)
+                pDialogue("You've found yourself just west of mercy.")
+                time.sleep(2)
+                c()
+                pType("Game Over. No Health Remaining")
+                return
+            
+        return
+
+    else:
+        pType("Attack missed!")
+        return
+# mobAttack removed — to be rewritten from scratch.
+# When you build it: it takes (mob, mobName), does ONE attack on the player,
+# applies damage to stats["health"], and RETURNS. It should NOT call playerAttack
+# at the end (that was the old chaining bug). The fight loop in mobEncounter is
+# what alternates turns now — mobAttack just does the mob's single turn and returns.
+
+
 def player_stats():
     stats_line = Text()
     stats_line.append("♥|", style="bold red")
@@ -216,33 +309,55 @@ def player_stats():
 #----------Mob Related------------------
 def mobEncounter():
     mobName = random.choice(list(mobs.keys()))
-    mob = mobs[mobName]
-    p(mob["introPhrase"]["voice1"])
+    mob = mobs[mobName].copy()   # .copy() so beating this mob doesn't damage the master template in mobs.json
+    pType(mob["introPhrase"]["voice1"]) ##TODO: Make it select the voices at random
     loadingscreen()
     time.sleep(3)
-    p(f"You encountered a {mobName}!")
-    while True:
-        mobfightMenu(mobName, mob)
-        break
- 
- 
-def mobfightMenu(mobName, mob):
-    while True:
-        p(f"{mobName}\nHealth: {mob['health']}\nAttack: {mob['attack']}")
-        print()
-        print()
+    pType(f"You encountered {mobName}!")
+    time.sleep(2)
+    c()
+
+    # One fight = one loop. It runs while BOTH are alive, and exits the moment
+    # either dies (the `and` becomes false). Fleeing exits early with `return`.
+    while stats["health"] > 0 and mob["health"] > 0:
+        mobstats = Text()
+        mobstats.append("♥|", style="bold red")
+        mobstats.append(f"{mob['health']}", style="red bold")
+        mobstats.append("    ⚔  |", style="blue")
+        mobstats.append(f"{mob['attack']}", style="bold blue")
+        console.print(Panel(mobstats, title=mobName, expand=False))
+        time.sleep(2)
         player_stats()
- 
+
         p("Select an Option:")
-        p("1) Fight\n2) Attempt to Flee\n3) View Inventory")
+        pType("1) Fight\n2) Attempt to Flee\n3) View Inventory")
         menuPick = input("> ")
+        time.sleep(1)
         if menuPick == "1":
-            playerAttack(mob)
+            playerAttack(mob, mobName)
+            mobAttack(mob, mobName)# >>> The mob's turn goes HERE: call mobAttack(mob, mobName) after the
+            # >>> player attacks, but only if the mob is still alive. You decide
+            # >>> how/when. Left unwired on purpose so the structure stays yours.
         elif menuPick == "2":
+            time.sleep(1)
+            pType("Attempting to flee.")
             risk = random.random()
             if risk < 0.5:
+                time.sleep(2)
                 stats['energy'] -= 1
+                console.print("[red]Escape Failed.[/red]")
                 console.print("[red]-1 ✦[/red]")
+                # no return -> loop continues, still fighting
+            else:
+                time.sleep(2)
+                p("Successfully fled.")
+                return   # fleeing ends the fight, hands control back to caller
+        elif menuPick == "3":
+            for item, amt in inventory.items():
+                print(item, "|", amt)
+
+    # If we fall out of the loop here, someone died (not fled).
+    # TODO: award loot if the MOB died; that logic can live here.
  
  
  
@@ -251,29 +366,29 @@ def mobfightMenu(mobName, mob):
 def Move():
     loadingscreen()
     encounterChance = random.random()
-    if encounterChance < 0.1:
+    if encounterChance < 0.01:##TODO: make sure you remove the extra 0s when done testing
         discoverloot()
-    elif encounterChance < 0.35:
+    elif encounterChance < 0.035:
         p("Secret Tavern")
-    elif encounterChance < 0.75:
+    elif encounterChance < 0.075:
         p("Event")
     elif encounterChance < 1:
         mobEncounter()
- 
+
 # ---------- Menus ----------
  
 def entryMenu():
-    p("Select an option")
-    p("1] Enter Game")
-    p("2] Exit")
-
-    menuPick = ask(["1", "2"])
-    if menuPick == "1":
-        time.sleep(2)
-        c()
-        main_playMenu()
+    gamestart=Text()
+    gamestart.append("Enter '1' to view the tutorial, or press any key to enter the game.", style="magenta")
+    gamestart.append("")
+    console.print(Panel(gamestart, title="[bold red]West of Mercy[/bold red]", expand=False))
+    gamestartpick=input(">")
+    if gamestartpick=="1":
+        p("Sorry, no tutorial available yet. Good luck!")
+        time.sleep(3)
     else:
-        quit()
+        return
+
 
 def restRoll(): #works with main_playMenu_choice
     number=random.random()
@@ -283,49 +398,21 @@ def restRoll(): #works with main_playMenu_choice
         mobEncounter()
  
  
-def main_playMenu(): #Works with main_playMenu_choice, #entryMenu
-    moveMenu = Table(box=None)
-    moveMenu.add_column(header="Select an Option", header_style="bold cyan")
-    moveMenu.add_row("[dim]1)[/dim] Move West")
-    moveMenu.add_row("[dim][cyan]2[/cyan])[/dim] [white]Rest[/white]" " [dim](-1+ [yellow]✦[/yellow])[/dim]")
-    moveMenu.add_row("[dim]3)[/dim] Inventory")
-    moveMenu.add_row("[dim]4)[/dim] Exit")
-    console.print(moveMenu)
-    menuPick = ask(["1", "2", "3", "4"])
-    if menuPick=="1":
-        Move()
-    elif menuPick=="2":
-        restRoll()
-    elif menuPick=="3":
-        for item,amt in inventory:
-            print(item, "|", amt)
-    elif menuPick=="4":
-        entryMenu()
+def main_playMenu():
+    playMenu = Table(box=None)
+    playMenu.add_column(header="Select an Option", header_style="bold red")
+    playMenu.add_row("[dim][cyan]1[/cyan])[/dim] [white]Move West[/white]" " [dim](-1 [yellow]✦[/yellow][/dim]")
+    playMenu.add_row("[dim][cyan]2[/cyan])[/dim] [white]Rest[/white]" " [dim](+1 [yellow]✦[/yellow])[/dim]")
+    playMenu.add_row("[dim][cyan]3[/cyan])[/dim] Inventory")
+    playMenu.add_row("[dim][cyan]4[cyan])[/dim] Exit")
+    console.print(playMenu)
+    mP=input("> ")
+    return mP
+
 
 
  
 # ---------- Main ----------
- 
-# === FIX 8 ===
-# WAS:  intro(), titlescreen(), the "Good evening" block, AND entryMenu/
-#       main_playMenu definitions were all tangled together — some running code
-#       sat ABOVE the function definitions it conceptually belonged with, and
-#       entryMenu was defined but never actually CALLED, so the game's real
-#       entry point never fired.
-# NOW:  ALL function definitions live above this line. This bottom block is the
-#       ONLY loose, runs-immediately code, and it runs in order:
-#         1. intro()        - the cold-open journal
-#         2. titlescreen()  - the ASCII title
-#         3. greeting       - "Good evening, traveler."
-#         4. entryMenu()    - hand control to the menu system, which is what
-#                             actually starts the game loop
-# WHY:  This is the "definitions up top, one block of running code at the bottom"
-#       shape we talked about. By the time this block runs, every function it
-#       calls already exists, so order-of-definition can never bite you.
-# IF NOT FIXED: entryMenu() was never called, so even with every other bug fixed,
-#       the menu system would sit there defined-but-dormant and the game would
-#       never reach the play loop. Also, mixing running code between defs is the
-#       exact tangle that broke things for you in Stelik.
 
 
 
@@ -337,13 +424,19 @@ c()#Initiailizing
 entryMenu()#Pre-Game
 loadingscreen()
 while True:
-    print(player_stats)
-    main_playMenu()#Game start prompt
+    player_stats()
+    mP=main_playMenu()#Game start prompt
+    if mP=="1":
+        Move()
+    elif mP=="2":
+        restRoll()
 
-#TODO - Increase time after attacking mobs
-#TODO - Have mobs attack player
-#TODO - Dont allow mob health to go below 0
-#TODO - Start working on randomized events
-#TODO - Start on the currency system, possibly implement casino games
-#TODO - Add chance for mob to attack player when resting
-#TODO - Add food drop chance for defeating mobs, renews health or energy
+
+#TODO: Increase time after attacking mobs
+#TODO: Have mobs attack player
+#TODO: Dont allow mob health to go below 0
+#TODO: Start working on randomized events
+#TODO: Start on the currency system, possibly implement casino games
+#TODO: Add chance for mob to attack player when resting
+#TODO: Add food drop chance for defeating mobs, renews health or energy
+#TODO: Add tutorial
